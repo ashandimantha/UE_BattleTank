@@ -31,8 +31,27 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	
 	InputComponent->BindAction("Turret_Clockwise", IE_Pressed, this, &ATank::RotateTurret);
+	InputComponent->BindAction("Turret_CountClockwise", IE_Pressed, this, &ATank::RotateTurretAnti);
+
 }
 
-void ATank::RotateTurret() {
+void ATank::RotateTurret() 
+{
 	//UE_LOG(LogTemp, Warning, TEXT("TURRET ROTATING"));
+	// SetRelativeRotation
+	// UChildActorComponent
+
+	Turret->SetRelativeRotation(FRotator(0, 60.0f, 0));
+
+}
+
+void ATank::RotateTurretAnti()
+{
+	Turret->SetRelativeRotation(FRotator(0,-60.0f,0));
+}
+
+void ATank::SetTurretChildActor(UChildActorComponent* TurretFromBP) 
+{
+	UE_LOG(LogTemp, Warning, TEXT("SetTurretChildActor Called"));
+	Turret = TurretFromBP;
 }
