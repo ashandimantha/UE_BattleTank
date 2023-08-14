@@ -9,6 +9,8 @@ ATank::ATank()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	// Aiming Component
+	TankAimingComponent = CreateDefaultSubobject<UTankAimingComponent>(FName("Aiming Component"));
 }
 
 // Called when the game starts or when spawned
@@ -22,7 +24,6 @@ void ATank::BeginPlay()
 void ATank::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
@@ -30,28 +31,67 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	
-	InputComponent->BindAction("Turret_Clockwise", IE_Pressed, this, &ATank::RotateTurret);
-	InputComponent->BindAction("Turret_CountClockwise", IE_Pressed, this, &ATank::RotateTurretAnti);
+	InputComponent->BindAxis("Rotate_Turret", this, &ATank::RotateTurret);
+	InputComponent->BindAxis("Elevate_Barrel", this, &ATank::ElevateBarrel);
+	InputComponent->BindAxis("Move_Tank", this, &ATank::MoveTank);
+	InputComponent->BindAxis("Rotate_Tank", this, &ATank::RotateTank);
 
 }
 
-void ATank::RotateTurret() 
+// Tank Movement - Forward and Backwards
+void ATank::MoveTank(float Speed)
 {
-	//UE_LOG(LogTemp, Warning, TEXT("TURRET ROTATING"));
-	// SetRelativeRotation
-	// UChildActorComponent
+	if (!Tank) { return; }
+	float Distance = GetWorld()->GetDeltaSeconds() * Speed * TankMovementSpeed;
+	Tank->AddRelativeLocation(Tank->GetForwardVector() * Distance);
+}
 
-	Turret->SetRelativeRotation(FRotator(0, 60.0f, 0));
+// Tank Movement - Ratation
+void ATank::RotateTank(float Speed)
+{
+	if (!Tank) { return; }
+	//Speed = GetWorld()->GetDeltaSeconds()
+	float Rotation = GetWorld()->GetDeltaSeconds() * Speed * TankRotationSpeed;
+	Tank->AddRelativeRotation(FRotator(0, Rotation, 0));
+}
+
+// Tank Turret Movement
+void ATank::RotateTurret(float Speed)
+{
+	if (!Turret) { return; }
+	float Rotation = GetWorld()->GetDeltaSeconds() * Speed * TurretRotationSpeed;
+	Turret->AddRelativeRotation(FRotator(0, Rotation, 0));
 
 }
 
-void ATank::RotateTurretAnti()
+// Tank Turret Barrel Movement
+void ATank::ElevateBarrel(float Speed)
 {
-	Turret->SetRelativeRotation(FRotator(0,-60.0f,0));
+	if (!Barrel) { return; }
+	float Rotation = GetWorld()->GetDeltaSeconds() * Speed * BarrelElevationSpeed;
+	Barrel->AddRelativeRotation(FRotator(Rotation, 0, 0));
 }
 
-void ATank::SetTurretChildActor(UChildActorComponent* TurretFromBP) 
+// Set Tank Body
+void ATank::SetTankStaticMesh(UStaticMeshComponent* TankFromBP)
 {
-	UE_LOG(LogTemp, Warning, TEXT("SetTurretChildActor Called"));
+	if (!TankFromBP) { return; }
+	Tank = TankFromBP;
+}
+
+// Set Turret from the mesh
+void ATank::SetTurretChildActor(UChildActorComponent* TurretFromBP)
+{
+	if (!TurretFromBP) { return; }
 	Turret = TurretFromBP;
+}
+
+void ATank::AimAt(FVector HitLocation)
+{
+	TankAimingComponent->AimAt(HitLocation);
+}
+
+void ATank::SetBarrelReference(UStaticMeshComponent* BarrelToSet)
+{
+	TankAimingComponent->SetBarrelReference(BarrelToSet);
 }
