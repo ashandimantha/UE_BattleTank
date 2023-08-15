@@ -4,9 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
-#include "TankAimingComponent.h"
-
 #include "Tank.generated.h"
+
+// Forward declerations
+class UTankBarrel;
+class UTankAimingComponent;
 
 UCLASS()
 class BATTLETANK_API ATank : public APawn
@@ -22,9 +24,6 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 	// Tank Mocement Component Pointer
 	UTankAimingComponent* TankAimingComponent = nullptr;
@@ -45,15 +44,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Tank Movement")
 		float TankRotationSpeed = 50.0f;
-	
-	UPROPERTY(EditAnywhere, Category = "Tank Movement")
-		float TurretRotationSpeed = 1.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Tank Movement")
-		float BarrelElevationSpeed = 1.0f;
-
-	UFUNCTION(BlueprintCallable, Category = "Setup")
-		void SetBarrelReference(UStaticMeshComponent* BarrelToSet);
+	UFUNCTION(BlueprintCallable, Category = Tank)
+		void SetBarrelReference(UTankBarrel* BarrelToSet);
 
 
 private:
@@ -62,13 +55,12 @@ private:
 	// Rotate tank at speed
 	void RotateTank(float Speed);
 
-	// Rotate Barrel at Speed, Negative values for counter clockwise
-	void RotateTurret(float Speed);
-	// Elevate Barrel at Speed, Negative values for counter clockwise
-	void ElevateBarrel(float Speed);
-
 	// A reference from blueprint
 	UStaticMeshComponent* Tank = nullptr;
 	UChildActorComponent* Turret = nullptr;
 	UStaticMeshComponent* Barrel = nullptr;
+
+	// Projectile Launch Speed
+	UPROPERTY(EditAnywhere, Category = "Firing Config")
+		float LaunchSpeed = 100000.0f; // 1000m/s
 };
