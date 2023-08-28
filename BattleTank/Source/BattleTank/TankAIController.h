@@ -25,12 +25,8 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 
 private:
-	
-	// Get a cast to AI Player Pawn in the world
-	ATank* GetAIControlledTank() const;
 
-	// Get a cast to the Player Pawn in the world
-	ATank* GetPlayerTank() const;
+	
 
 public:
 	// Set defualt values

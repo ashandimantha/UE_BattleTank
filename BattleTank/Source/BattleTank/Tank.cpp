@@ -2,6 +2,10 @@
 
 #include "Tank.h"
 #include "TankAimingComponent.h"
+#include "Components/StaticMeshComponent.h"
+#include "Engine/StaticMeshSocket.h"
+#include "TankBarrel.h"
+#include "Projectile.h"
 
 // Sets default values
 ATank::ATank()
@@ -27,6 +31,7 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	
 	InputComponent->BindAxis("Move_Tank", this, &ATank::MoveTank);
 	InputComponent->BindAxis("Rotate_Tank", this, &ATank::RotateTank);
+	//InputComponent->BindAxis("Fire", this, &ATank::Fire);
 
 }
 
@@ -58,7 +63,6 @@ void ATank::SetTankStaticMesh(UStaticMeshComponent* TankFromBP)
 void ATank::SetTurretChildActor(UChildActorComponent* TurretFromBP)
 {
 	if (!TurretFromBP) { return; }
-	Turret = TurretFromBP;
 	TankAimingComponent->SetTurretReference(TurretFromBP);
 }
 
@@ -70,4 +74,19 @@ void ATank::AimAt(FVector HitLocation)
 void ATank::SetBarrelReference(UTankBarrel* BarrelToSet)
 {
 	TankAimingComponent->SetBarrelReference(BarrelToSet);
+	Barrel = BarrelToSet;
+}
+
+void ATank::Fire() 
+{
+	//UE_LOG(LogTemp, Warning, TEXT("Firing: %f"), input);
+	if (!Barrel) { return; }
+
+	auto Projectile = GetWorld()->SpawnActor<AProjectile>(
+									ProjectileBlueprint,
+									Barrel->GetSocketLocation(FName("BarrelEnd")),
+									Barrel->GetSocketRotation(FName("BarrelEnd"))
+									);
+
+	Projectile->LaunchProjectile(LaunchSpeed);
 }
