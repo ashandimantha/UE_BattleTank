@@ -5,12 +5,18 @@
 
 ATankAIController::ATankAIController()
 {
-	
+
 }
 
 void ATankAIController::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// Find the first child actor of the player pawn
+	auto PlayerController = GetWorld()->GetFirstPlayerController();
+	auto PlayerPawn = PlayerController->GetPawn();
+	PlayerPawn->GetAttachedActors(ChildActors);
+	FirstChildActor = ChildActors[0];
 
 }
 
@@ -26,7 +32,7 @@ void ATankAIController::Tick(float DeltaTime)
 		// TODO Move AI Tank towards the player
 
 		// Aim towards the player
-		AIControlledTank->AimAt(PlayerTank->GetActorLocation());
+		AIControlledTank->AimAt(FirstChildActor->GetActorLocation());
 
 		// Fire if ready
 		AIControlledTank->Fire();

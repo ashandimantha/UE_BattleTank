@@ -55,7 +55,6 @@ public:
 	UPROPERTY(EditAnywhere, Category = Setup)
 		TSubclassOf<AProjectile> ProjectileBlueprint;
 
-
 private:
 	// move tank at speed
 	void MoveTank(float Speed);
@@ -69,7 +68,10 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Firing Config")
 		float LaunchSpeed = 100000.0f; // 1000m/s
 
-	UTankBarrel* Barrel = nullptr;
+	UPROPERTY(EditDefaultsOnly, Category = "Firing Config")
+		float ReloadTimeInSeconds = 3;
 
-	float ReloadTimeInSeconds = 3;
+	double LastFireTime = 0;
+
+	UTankBarrel* Barrel = nullptr;
 };

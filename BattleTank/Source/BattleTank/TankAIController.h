@@ -26,7 +26,8 @@ protected:
 
 private:
 
-	
+	TArray<AActor*> ChildActors;
+	AActor* FirstChildActor = nullptr;
 
 public:
 	// Set defualt values

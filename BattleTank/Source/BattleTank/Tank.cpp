@@ -43,7 +43,7 @@ void ATank::MoveTank(float Speed)
 	Tank->AddRelativeLocation(Tank->GetForwardVector() * Distance);
 }
 
-// Tank Movement - Ratation
+// Tank Movement - Rotation
 void ATank::RotateTank(float Speed)
 {
 	if (!Tank) { return; }
@@ -79,14 +79,18 @@ void ATank::SetBarrelReference(UTankBarrel* BarrelToSet)
 
 void ATank::Fire() 
 {
-	//UE_LOG(LogTemp, Warning, TEXT("Firing: %f"), input);
-	if (!Barrel) { return; }
+	float Time = GetWorld()->GetTimeSeconds();
+	bool isReloaded = (Time - LastFireTime) > ReloadTimeInSeconds;
+	if (Barrel && isReloaded) {
+		auto Projectile = GetWorld()->SpawnActor<AProjectile>(
+			ProjectileBlueprint,
+			Barrel->GetSocketLocation(FName("BarrelEnd")),
+			Barrel->GetSocketRotation(FName("BarrelEnd"))
+			);
 
-	auto Projectile = GetWorld()->SpawnActor<AProjectile>(
-									ProjectileBlueprint,
-									Barrel->GetSocketLocation(FName("BarrelEnd")),
-									Barrel->GetSocketRotation(FName("BarrelEnd"))
-									);
+		Projectile->LaunchProjectile(LaunchSpeed);
+		LastFireTime = GetWorld()->GetTimeSeconds();
 
-	Projectile->LaunchProjectile(LaunchSpeed);
+	}
+
 }
