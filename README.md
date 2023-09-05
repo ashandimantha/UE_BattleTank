@@ -10,8 +10,8 @@ Game Mode: Online Multiplayer (2-4 players)
 Camera Perspective: Third Person View
 
 ### Core Mechanics
-Players control tanks with independent turret rotation and movement controls.
-Tanks have health points, ammunition, and varying armor strengths.
+- Players control tanks with independent turret rotation and movement controls.
+- Tanks have health points, ammunition, and varying armor strengths.
 Physics-based movement and terrain interaction.
 Power-ups and pickups enhance tank abilities.
 Terrain destruction and cover mechanics.
